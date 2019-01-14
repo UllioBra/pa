@@ -8,6 +8,7 @@ from bs4 import BeautifulSoup
 
 def Gettex(url, to):
     req = requests.get(url)
+    print("S_code :" , req.status_code)
     req.encoding = 'gbk'
     bf = BeautifulSoup(req.text, 'html.parser')
     title = bf.find('div', class_='nr_title').text.strip()
@@ -26,9 +27,9 @@ def Get(url = 'https://m.hongyeshuzhai.com/wapbook2229/'):
     ent = bf.find('li', class_='tomcat').a['href']
 
     to = []
-    outp = './' + title + '/test/'
+    outp = 'G:/Autobook/' + title + '/'
     if not os.path.exists(outp):
-        os.mkdir(outp)
+        os.makedirs(outp)
         with open(outp + 'tag', 'w') as a:
             a.writelines(ent)
         with open(outp + 'cnt', 'w') as b:
@@ -40,10 +41,13 @@ def Get(url = 'https://m.hongyeshuzhai.com/wapbook2229/'):
     
     while True:
         cnt = cnt + 1
+        print(cnt)
         num = '0000' + str(cnt)
         le = len(num)
         to_u = 'https://m.hongyeshuzhai.com' + to[0]
-        if url == ('https://m.hongyeshuzhai.com/wapbook' + re.search(r'\d+', url).group() + '/'):
+        b = 'https://m.hongyeshuzhai.com/wapbook' + re.search(r'\d+', url).group() + '/'
+        if to_u == b:
+            print(b)
             break
         with open(outp + num[le-4:le] + '.txt', 'w', encoding='utf8') as a:
             a.writelines(re.sub(r'\s{2,}', '\n', Gettex(to_u, to)))
