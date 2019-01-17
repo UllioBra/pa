@@ -42,7 +42,7 @@ def gettex(i, f, outpa):
         a.writelines(tex)
 
 
-def get(url = 'https://www.kuaiyankanshu.net/683920/dir.html'):
+def get(url = 'https://www.kuaiyankanshu.net/5694/dir.html'):
     title, lis = get_list(url)
     outpa = 'G:/Autobook/www.kuaiyankanshu.net/' + title + '/'
     if not os.path.isdir(outpa): 
