@@ -1,4 +1,4 @@
-from epublib import gsx
+from epublib import gsx, test_gsx
 import os,re
 from bs4 import BeautifulSoup
 
@@ -11,29 +11,30 @@ def main(inp, outp = 'c:/test'):
         if os.path.splitext(i)[-1] == '.txt':
            gsx.pre_txt(inp, outp, i)
 
-def make():
+def test_make():
     name = '一派之长为老不尊'
-    path = 'G:/Autobook/一派之长为老不尊！'
-    outp = 'g:/Autobook/epub/'
+    path = 'G:/Autobook/www.kuaiyankanshu.net/一派之长为老不尊！'
+    outp = 'g:/Autobook/epub/test/'
+    author = '湛蓝工房'
     if not os.path.isdir(outp):
         os.makedirs(outp)
-    gsx.init_epub(outp, name, '湛蓝工房')
+    test_gsx.init_epub(outp, name, author)
+    test_gsx.test_update_epub(outp + name, path)
+    test_gsx.make_epub(outp, name, outp)
 
-    # with open(outp + 'test/OEBPS/content.opf', "r", encoding='utf8') as a:
-    #     text = a.read()
-    # bf = BeautifulSoup(text, 'html.parser')
-    # tag = bf.find('spine')
-    # new_tag = bf.new_tag('itemref', idref='1')
-    # tag.append(new_tag)
-    # print(bf)
-
-    lis = os.listdir(path)
-    for i in lis:
-        if os.path.splitext(i)[-1] == '.txt':
-            title = gsx.pre_txt(path, outp+name+'/OEBPS/', i)
-            gsx.add_toc(outp+name+'/OEBPS/', re.sub(r'[a-z]+', 'html', i), outp+name, title)
+def make():
+    name = '一派之长为老不尊'
+    path = 'G:/Autobook/www.kuaiyankanshu.net/一派之长为老不尊！'
+    outp = 'g:/Autobook/epub/'
+    author = '湛蓝工房'
+    if not os.path.isdir(outp):
+        os.makedirs(outp)
+    gsx.init_epub(outp, name, author)
+    gsx.update_epub(outp + name, path)
+    gsx.make_epub(outp, name)
 
 
 if __name__ == "__main__":
     # main(input("input path : "))
-    make()
+    # make()
+    test_make()
