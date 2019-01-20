@@ -1,5 +1,13 @@
 {
+<<<<<<< HEAD
     "python.pythonPath": "C:\\Users\\gsx\\AppData\\Local\\Programs\\Python\\Python37-32\\python.exe",
     "python.linting.pylintEnabled": true,
     "python.linting.enabled": true
+=======
+    "python.pythonPath": "C:\\Program Files (x86)\\Python37-32\\python3.exe",
+    "python.linting.pylintEnabled": false,
+    "python.linting.pep8Enabled": false,
+    "python.linting.enabled": true,
+    "python.linting.pylamaEnabled": true
+>>>>>>> bd483e845342ea513e3aa0843569fef491ea1e02
 }
