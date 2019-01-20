@@ -42,7 +42,7 @@ def gettex(i, f, outpa):
         a.writelines(tex)
 
 
-def get(url = 'https://www.kuaiyankanshu.net/5694/dir.html'):
+def get(url = 'https://www.kuaiyankanshu.net/683920/dir.html'):
     title, lis = get_list(url)
     outpa = 'G:/Autobook/www.kuaiyankanshu.net/' + title + '/'
     if not os.path.isdir(outpa): 
@@ -56,4 +56,12 @@ def get(url = 'https://www.kuaiyankanshu.net/5694/dir.html'):
             gettex(i, f, outpa)
     f.close()
 
-get()
+dic = {
+    '一派之长为老不尊！' : 'https://www.kuaiyankanshu.net/683920/dir.html',
+
+}
+if __name__ == "__main__":
+    for i, j in dic.items():
+        print("----------Update %s--------------" % i )
+        get(j)
+        print("----------Update %s finished-----" % i )
