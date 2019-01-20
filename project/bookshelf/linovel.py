@@ -31,9 +31,12 @@ class linovel():
         'https': 'socks5://127.0.0.1:1080'
     }
 
+    def get_kotori_key(self, url = base_url):
+        return BeautifulSoup(requests.get(url).text, 'lxml').find('meta', attrs={'name':'kotori-key'})['content']
+
     def login(self, url=login_url):
         dica = {
-            '_kotori': 'a1881cd539a5b3cf20a25eb25e59407c',
+            '_kotori': self.get_kotori_key(),
             'lgt': '0',
             'redirect': '/',
             'username': self.username,
@@ -60,7 +63,7 @@ class linovel():
             dic = {'img_url': i['data-original'],
                    'book_url': book_url, 'id': re.search(patt, book_url).group()}
             lis.append(dic)
-            print(dic['id'])
+            print("Book id : " + dic['id'])
         return lis
 
     def Get_book_info(self, url='https://www.linovel.net/book/100009.html'):
@@ -82,14 +85,14 @@ class linovel():
         return dic
 
     def Main(self):
-        db = BaseDBProject('./test.db')
+        db = BaseDBProject('./linovel.db')
         lis = []
+        db.create_table(self.name, self.book_dic)
         for i in self.Get_list():
             dic = dict(self.Get_book_info(i['book_url']), **i)
-            print(dic['title'])
-            # db.create_table(self.name, self.book_dic)
+            print("Book name : " + dic['title'])
             lis.append(dic['id'])
-            # db.insert(self.name, dic)
+            db.insert(self.name, dic)
         condition = ' and '.join('id!=%s' % i for i in lis)
         db_lis = db.fetchall(db.selete(['id'], self.name, condition))
         if db_lis != []:
@@ -98,7 +101,4 @@ class linovel():
 
 
 test = linovel()
-# test.Main()
-loc = time.localtime(time.time())
-print(time.strftime('time : %H', loc))
-test.check_in()
+test.Main()
