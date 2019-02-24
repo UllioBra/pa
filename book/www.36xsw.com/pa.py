@@ -1,5 +1,6 @@
 import os,re,requests
 from bs4 import BeautifulSoup
+from multiprocessing import Pool
 
 def get(url = 'http://www.36xsw.com/201_201275/'):
     req = requests.get(url)
@@ -16,7 +17,8 @@ def get(url = 'http://www.36xsw.com/201_201275/'):
 
 
 def main():
-    title, lis = get()
+    title, lis = get('http://www.36xsw.com/7_7515/')
+    print("start : " + title)
     outp = 'G:/Autobook/36xsw.com/'
     if not os.path.isdir(outp + title):
         os.makedirs(outp + title)

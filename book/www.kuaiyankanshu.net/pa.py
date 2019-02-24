@@ -44,7 +44,7 @@ def gettex(i, f, outpa):
 
 def get(url = 'https://www.kuaiyankanshu.net/683920/dir.html'):
     title, lis = get_list(url)
-    outpa = 'G:/Autobook/www.kuaiyankanshu.net/' + title + '/'
+    outpa = 'F:/Autobook/www.kuaiyankanshu.net/' + title + '/'
     if not os.path.isdir(outpa): 
         os.makedirs(outpa)
         with open(outpa + 'Download.log', 'w'): pass
