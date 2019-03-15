@@ -14,17 +14,28 @@ class EpubBook():
     def __init__(self, epub, epub_source, txt_input, book_name, author):
         '''
 
-            epub: epub书籍路径(包含书名)
+            epub: epub书籍路径(不包含书名)
 
-            epub_source: epub书籍未压缩文件路径(包含书名)
+            epub_source: epub书籍未压缩文件路径(不包含书名)
 
-            txt_input: txt原始文件目录(包含书名)
+            txt_input: txt原始文件目录(不包含书名)
         '''
-        self.epub = self.init_path(epub)
-        self.epub_source = self.init_path(epub_source)
-        self.txt_input = self.init_path(txt_input)
         self.book_name = book_name
+        self.epub = self.init_path(epub) + self.book_name + '.epub'
+        self.epub_source = self.init_path(self.init_path(epub_source) + self.book_name)
+        self.txt_input = self.init_path(self.init_path(txt_input) + self.book_name)
         self.author = author
+    
+    def deal(self):
+        return self.book_name.replace('/', '1').replace('\\', '2').replace('"', '3').replace('|', '4').replace('?', '5').replace('<', '6').replace('>', '7').replace(':', '8').replace('*', '9')
+
+    def Print_attr(self):
+        for i in self.__dir__():
+            if(i[0:2] == '__'):
+                return
+            else:
+                print(i , ':' , getattr(self, i))
+        print(' ')
 
     def cnm(self, tx):
         return tx.replace('navmap', 'navMap').replace('doctitle', 'docTitle').replace('_class', 'class').replace('navpoint', 'navPoint').replace('navlabel', 'navLabel').replace('playorder', 'playOrder')
@@ -44,7 +55,7 @@ class EpubBook():
             print("Is not '.txt'")
             return
         inp = self.txt_input + txt_name
-        outp = self.epub_source + '/' + txt_name.replace('.txt', '.html')
+        outp = self.epub_source + 'OEBPS/' + txt_name.replace('.txt', '.html')
         title = ''
         with open(inp, 'r', encoding='utf8') as a, open(outp, 'w', encoding='utf8') as b:
             b.writelines(
@@ -56,24 +67,28 @@ class EpubBook():
                 if i == 0:
                     title = line
                     b.writelines("<h2>%s</h2>" % line)
-            else:
-                b.writelines("<p>%s</p>" % line)
+                else:
+                    b.writelines("<p>%s</p>" % line)
             b.writelines('</body></html>')
         return title
 
     def init_epub(self):
         if os.path.isdir(self.epub_source):
-            os.makedirs(self.epub_source)
             k = input("%s Existed ! Whether to overwrite the file 0->No 1->Yes : " %
-                      self.epub.split('/')[-2])
+                      self.epub)
+            while k is not '0' and k is not '1':
+                print("Input is illegal")
+                k = input("%s Existed ! Whether to overwrite the file 0->No 1->Yes : " %
+                      self.epub)
+            
+            print(k)
+
             if k == '0':
                 print('Interrupt')
                 return
-            elif k == '1':
-                shutil.rmtree(self.epub_source)
             else:
-                print("Input is illegal")
-                return
+                shutil.rmtree(self.epub_source)
+
         op = self.epub_source
         os.makedirs(op + 'META-INF/')
         os.makedirs(op + 'OEBPS/')
@@ -97,7 +112,7 @@ class EpubBook():
         '''
         with open(self.epub_source + 'OEBPS/content.opf', "r", encoding='utf8') as a:
             text = a.read()
-        bf = BeautifulSoup(text, 'lxml')
+        bf = BeautifulSoup(text, 'html.parser')
         tag = bf.find('manifest')
         for name in lis_:
             dic = {
@@ -108,18 +123,18 @@ class EpubBook():
             new_tag = bf.new_tag('item', **dic)
             tag.append(new_tag)
         with open(self.epub_source + 'OEBPS/content.opf', "w", encoding='utf8') as a:
-            a.writelines(str(bf))
+            a.writelines(self.cnm(str(bf)))
 
     def conc_con_toc(self, lis_):
         with open(self.epub_source + 'OEBPS/content.opf', "r", encoding='utf8') as a:
             text = a.read()
-        bf = BeautifulSoup(text, 'lxml')
+        bf = BeautifulSoup(text, 'html.parser')
         tag = bf.find('spine')
         for name in lis_:
             new_tag = bf.new_tag('itemref', idref='id' + re.search(r'\d+', name).group())
             tag.append(new_tag)
         with open(self.epub_source + 'OEBPS/content.opf', "w", encoding='utf8') as a:
-            a.writelines(str(bf))
+            a.writelines(self.cnm(str(bf)))
 
     def add_toc(self, dic):
         self.add_content(dic.keys())
@@ -144,7 +159,7 @@ class EpubBook():
     
     def update_epub(self):
         print("Update start ! ")
-        lis_ = os.listdir(self.epub.source + 'OEBPS')
+        lis_ = os.listdir(self.epub_source + 'OEBPS')
         dic_ = {}
         for i in os.listdir(self.txt_input):
             if os.path.splitext(i)[-1] == '.txt':
@@ -155,11 +170,12 @@ class EpubBook():
 
     def make_epub(self):
         os.chdir(self.epub_source)
-        epub = zipfile.ZipFile(self.epub + '.epub', 'w')
+        epub = zipfile.ZipFile(self.epub, 'w')
         epub.write('mimetype', compress_type=zipfile.ZIP_STORED)
         for i in os.listdir('.'):
             if os.path.isdir(i):
                 for j in os.listdir(i):
+                    print(j)
                     epub.write(i + '/' + j, compress_type=zipfile.ZIP_DEFLATED)
         epub.close()
         print("Epub Maker finished ! ")
@@ -168,6 +184,7 @@ class EpubBook():
         self.init_epub()
         self.update_epub()
         self.make_epub()
+        print('\n')
 
 
 container = """<?xml version="1.0"?> 

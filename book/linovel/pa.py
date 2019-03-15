@@ -100,9 +100,6 @@ def get_book(i):
     p.join()
     print("------------end : %s--------------" % i['name'])
 
-def to():
-    return bs_path, lis
-
 if __name__ == "__main__":
     for i in lis:
         i['name'] = deal(i['name'])
